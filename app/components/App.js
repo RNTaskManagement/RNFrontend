@@ -8,31 +8,30 @@ import Nav from '../config/routes';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux'
 import combiner from '../reducers/Combiner'
-// import thunk from 'redux-thunk';
+import thunk from 'redux-thunk';
+import firebaseConfig from '../config/FirebaseConfig'
 // import logger from 'redux-logger';
 
-import { View, Text } from 'react-native'
+var firebase = require('firebase');
+
+
 export const store = createStore(
-    combiner
+    combiner,
+    applyMiddleware(thunk)
 );
 
-//provider makes sure that store is available throughout the app
-// <Provider store={store}>
-//     <Nav
-//         ref={
-//             nav => {
-//                 this.navigator = nav;
-//             }
-//         } />
-// </Provider>
 
 export default class App extends React.Component {
 
+    constructor() {
+        super()
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        console.log(firebaseConfig)
+    }
+
     render() {
         return (
-            // <View>
-            //     <Text>Hello world</Text>
-            // </View>
             <Provider store={store}>
                 <Nav
                     ref={

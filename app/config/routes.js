@@ -2,12 +2,14 @@ import { createStackNavigator, createNavigationContainer, createSwitchNavigator 
 
 import mainScreen from './BottomTabNavigator';
 import loginScreen from '../screens/LoginScreen';
+import homeScreen from '../screens/HomeScreen'
 
 import { fromRight } from 'react-navigation-transitions';
 
 const onboardingNavigator = createStackNavigator(
     {
         LoginScreen: { screen: loginScreen },
+        HomeScreen: { screen: homeScreen }
     },
     {
         initialRouteName: 'LoginScreen',
