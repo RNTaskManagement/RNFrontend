@@ -2,5 +2,5 @@ import { AppRegistry } from 'react-native';
 import App from './app/components/App';
 
 
-AppRegistry.registerComponent('TeamTasks', () => App);
+AppRegistry.registerComponent('teamtasks', () => App);
 
