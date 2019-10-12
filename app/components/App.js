@@ -26,7 +26,9 @@ export default class App extends React.Component {
     constructor() {
         super()
         // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
         console.log(firebaseConfig)
     }
 

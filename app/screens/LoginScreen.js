@@ -18,9 +18,12 @@ import {
 
 const firebase = require('firebase')
 
+
+import renderIf from '../utils/renderif'
+
 const { width: WIDTH } = Dimensions.get('window');
 
-class HomeScreen extends Component {
+class LoginScreen extends Component {
 
     constructor(props) {
         super(props);
@@ -28,8 +31,17 @@ class HomeScreen extends Component {
         this.state = {
             //put state item here
             userName: '',
-            password: ''
+            password: '',
+            confirmPassword: '',
+            isSignedIn: false,
+            isNewUser: false
         };
+    }
+
+    componentDidMount() {
+        // if (firebase.auth().currentUser) {
+        //     this.props.navigation.navigate({ routeName: 'HomeScreen' })
+        // }
     }
 
     render() {
@@ -39,11 +51,10 @@ class HomeScreen extends Component {
                     <Image style={styles.logo} />
                     <Text style={styles.logoText}> TEAM TASKS </Text>
                 </View>
-
                 <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.input}
-                        placeholder={'UserName'}
+                        placeholder={'Email'}
                         placeholderTextColor={'rgba(255, 255, 255, 0.7)'}
                         onChangeText={(text) => { this.setState({ userName: text }) }}
                     />
@@ -58,33 +69,102 @@ class HomeScreen extends Component {
                     />
                     <TouchableOpacity style={styles.btnEye}></TouchableOpacity>
                 </View>
-                <TouchableOpacity style={styles.btnLogin} onPress={() => { this.signup(this.state.userName, this.state.password) }}>
-                    <Text style={styles.text}> Login </Text>
-                </TouchableOpacity>
+                {renderIf(!this.state.isNewUser)(
+                    <View>
+                        <View>
+                            <TouchableOpacity style={styles.btnLogin} onPress={() => { this.login() }}>
+                                <Text style={styles.text}> Login </Text>
+                            </TouchableOpacity>
+                        </View>
+                        <TouchableOpacity onPress={() => {
+                            this.toggleSignIn();
+                        }}>
+                            <Text style={{ color: 'white', textAlign: 'center', marginTop: 20 }}> New user? Please register </Text>
+                        </TouchableOpacity>
+                    </View>
+                )
+                }
+
+                {/* two renderif due to react native improper margin bug */}
+                {renderIf(this.state.isNewUser)(
+                    <View style={styles.inputContainer}>
+                        <TextInput
+                            style={styles.input}
+                            placeholder={'Cofirm Password'}
+                            secureTextEntry={true}
+                            onChangeText={(text) => { this.setState({ confirmPassword: text }) }}
+                            placeholderTextColor={'rgba(255, 255, 255, 0.7)'}
+                        />
+                        <TouchableOpacity style={styles.btnEye}></TouchableOpacity>
+                    </View>
+                )
+                }
+                {renderIf(this.state.isNewUser)(
+                    <View>
+                        <View>
+                            <TouchableOpacity style={styles.btnLogin} onPress={() => { this.signup() }}>
+                                <Text style={styles.text}> Register </Text>
+                            </TouchableOpacity>
+                        </View>
+                        <TouchableOpacity onPress={() => {
+                            this.toggleSignIn();
+                        }}>
+                            <Text style={{ color: 'white', textAlign: 'center', marginTop: 20 }}> Already have and account? Login </Text>
+                        </TouchableOpacity>
+                    </View>
+                )
+                }
+
             </ImageBackground>
         );
     }
 
+    toggleSignIn() {
+        this.setState({
+            isNewUser: !this.state.isNewUser
+        })
+    }
+
     //these should go into store
-    async signup(email, pass) {
-        try {
-            await firebase.auth().createUserWithEmailAndPassword(email, pass);
-            this.props.navigation.navigate({ routeName: 'HomeScreen' })
-            console.log('didnt work')
-            // Navigate to the Home page, the user is auto logged in
-        } catch (error) {
-            console.log(error.toString());
+    signup() {
+        if (this.state.password === this.state.confirmPassword) {
+            try {
+                firebase.auth().createUserWithEmailAndPassword(this.state.userName, this.state.password).then((user) => {
+                    console.log('i am in')
+                    this.props.navigation.navigate({ routeName: 'HomeScreen' })
+                })
+                // Navigate to the Home page, the user is auto logged in
+            } catch (error) {
+                console.log(error.toString());
+            }
+        } else {
+            //this should be replaced ith dynamic check with tick and cross
+            Alert.alert(
+                'Password doesnt match',
+                'Confirm password and password doesn\'t match',
+                [
+
+                ],
+                { cancelable: true },
+            );
         }
+
     }
 
     //signup('abc@gmail.com', 'abcdef');
 
-    async login(email, pass) {
+    login() {
         try {
-            await firebase.auth().signInWithEmailAndPassword(email, pass);
+            firebase.auth().signInWithEmailAndPassword(this.state.userName, this.state.password).then((user) => {
+                console.log(user)
+                if (user) {
+                    this.props.navigation.navigate({ routeName: 'HomeScreen' })
+                } else {
+
+                }
+            })
 
             console.log('Logged In!');
-
             // Navigate to the Home page
         } catch (error) {
             console.log(error.toString());
@@ -113,7 +193,7 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps)(HomeScreen)
+export default connect(mapStateToProps)(LoginScreen)
 
 const styles = StyleSheet.create({
     backgroundContainer: {
@@ -145,7 +225,7 @@ const styles = StyleSheet.create({
         borderRadius: 25,
         fontSize: 16,
         paddingLeft: 45,
-        backgroundColor: 'rgba(32, 76, 31, 0.7)',
+        backgroundColor: 'rgba(32, 76, 31, 0.5)',
         color: 'rgba(255, 255, 255, 0.7)',
         marginHorizontal: 25,
     },
@@ -158,8 +238,9 @@ const styles = StyleSheet.create({
         width: WIDTH - 65,
         height: 45,
         borderRadius: 25,
-        backgroundColor: 'rgba(7, 243, 125, 0.9)',
+        backgroundColor: 'rgba(7, 243, 125, 0.8)',
         justifyContent: 'center',
+        alignItems: 'center',
         marginTop: 20,
     },
     text: {
