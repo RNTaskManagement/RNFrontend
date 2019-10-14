@@ -1,15 +1,17 @@
 import { createStackNavigator, createNavigationContainer, createSwitchNavigator } from 'react-navigation';
 
-import mainScreen from './BottomTabNavigator';
+import bottomNav from './BottomTabNavigator';
 import loginScreen from '../screens/LoginScreen';
 import homeScreen from '../screens/HomeScreen'
+import mainScreen from '../screens/MainScreen'
 
 import { fromRight } from 'react-navigation-transitions';
 
 const onboardingNavigator = createStackNavigator(
     {
         LoginScreen: { screen: loginScreen },
-        HomeScreen: { screen: homeScreen }
+        HomeScreen: { screen: homeScreen },
+        MainScreen: { screen: mainScreen }
     },
     {
         initialRouteName: 'LoginScreen',
@@ -20,7 +22,7 @@ const onboardingNavigator = createStackNavigator(
 
 const mainModalNavigator = createStackNavigator(
     {
-        MainScreen: mainScreen,
+        TasksScreen: { screen: bottomNav },
     }, {
     mode: 'modal',
     cardStyle: {

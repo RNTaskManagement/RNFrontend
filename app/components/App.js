@@ -13,6 +13,7 @@ import firebaseConfig from '../config/FirebaseConfig'
 // import logger from 'redux-logger';
 
 var firebase = require('firebase');
+require("firebase/firestore");
 
 
 export const store = createStore(
@@ -21,15 +22,15 @@ export const store = createStore(
 );
 
 
-export default class App extends React.Component {
+class App extends React.Component {
 
     constructor() {
         super()
         // Initialize Firebase
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
+
         }
-        console.log(firebaseConfig)
     }
 
     render() {
@@ -44,5 +45,9 @@ export default class App extends React.Component {
             </Provider>
         );
     }
+}
+
+module.exports = {
+    App
 }
 

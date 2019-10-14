@@ -18,18 +18,21 @@ import {
 
 const firebase = require('firebase')
 
-
 import renderIf from '../utils/renderif'
 
 const { width: WIDTH } = Dimensions.get('window');
+var db;
 
 class LoginScreen extends Component {
 
     constructor(props) {
         super(props);
 
+        db = firebase.firestore();
+
         this.state = {
             //put state item here
+            name: '',
             userName: '',
             password: '',
             confirmPassword: '',
@@ -39,9 +42,10 @@ class LoginScreen extends Component {
     }
 
     componentDidMount() {
-        // if (firebase.auth().currentUser) {
-        //     this.props.navigation.navigate({ routeName: 'HomeScreen' })
-        // }
+        if (firebase.auth().currentUser) {
+            console.log(firebase.auth().currentUser)
+            this.props.navigation.navigate({ routeName: 'MainScreen' })
+        }
     }
 
     render() {
@@ -79,7 +83,7 @@ class LoginScreen extends Component {
                         <TouchableOpacity onPress={() => {
                             this.toggleSignIn();
                         }}>
-                            <Text style={{ color: 'white', textAlign: 'center', marginTop: 20 }}> New user? Please register </Text>
+                            <Text style={{ color: 'rgba(255, 255, 255, 0.7)', textAlign: 'center', marginTop: 20 }}> New user? Please register </Text>
                         </TouchableOpacity>
                     </View>
                 )
@@ -87,15 +91,26 @@ class LoginScreen extends Component {
 
                 {/* two renderif due to react native improper margin bug */}
                 {renderIf(this.state.isNewUser)(
-                    <View style={styles.inputContainer}>
-                        <TextInput
-                            style={styles.input}
-                            placeholder={'Cofirm Password'}
-                            secureTextEntry={true}
-                            onChangeText={(text) => { this.setState({ confirmPassword: text }) }}
-                            placeholderTextColor={'rgba(255, 255, 255, 0.7)'}
-                        />
-                        <TouchableOpacity style={styles.btnEye}></TouchableOpacity>
+                    <View>
+                        <View style={styles.inputContainer}>
+                            <TextInput
+                                style={styles.input}
+                                placeholder={'Cofirm Password'}
+                                secureTextEntry={true}
+                                onChangeText={(text) => { this.setState({ confirmPassword: text }) }}
+                                placeholderTextColor={'rgba(255, 255, 255, 0.7)'}
+                            />
+                            <TouchableOpacity style={styles.btnEye}></TouchableOpacity>
+                        </View>
+                        <View style={styles.inputContainer}>
+                            <TextInput
+                                style={styles.input}
+                                placeholder={'Name'}
+                                onChangeText={(text) => { this.setState({ name: text }) }}
+                                placeholderTextColor={'rgba(255, 255, 255, 0.7)'}
+                            />
+                            <TouchableOpacity style={styles.btnEye}></TouchableOpacity>
+                        </View>
                     </View>
                 )
                 }
@@ -109,7 +124,7 @@ class LoginScreen extends Component {
                         <TouchableOpacity onPress={() => {
                             this.toggleSignIn();
                         }}>
-                            <Text style={{ color: 'white', textAlign: 'center', marginTop: 20 }}> Already have and account? Login </Text>
+                            <Text style={{ color: 'rgba(255, 255, 255, 0.7)', textAlign: 'center', marginTop: 20 }}> Already have and account? Login </Text>
                         </TouchableOpacity>
                     </View>
                 )
@@ -130,8 +145,36 @@ class LoginScreen extends Component {
         if (this.state.password === this.state.confirmPassword) {
             try {
                 firebase.auth().createUserWithEmailAndPassword(this.state.userName, this.state.password).then((user) => {
-                    console.log('i am in')
-                    this.props.navigation.navigate({ routeName: 'HomeScreen' })
+                    if (user) {
+                        //create user db as firebase doesnt allow to get user list
+                        // firebase.database().ref('/users/' + user.uid).set({
+                        //     name: this.state.name,
+                        //     email: user.email,
+                        //     teams: []
+                        // })
+                        db.collection("users").add({
+                            name: this.state.name,
+                            email: user.user.email,
+                            teams: []
+                        })
+                        return user.user.updateProfile({
+                            displayName: this.state.name
+                        })
+
+
+
+                    }
+                }).then(() => {
+                    this.props.navigation.navigate({ routeName: 'MainScreen' })
+                }).catch((error) => {
+                    Alert.alert(
+                        'Error',
+                        error.toString(),
+                        [
+
+                        ],
+                        { cancelable: true },
+                    );
                 })
                 // Navigate to the Home page, the user is auto logged in
             } catch (error) {
@@ -158,7 +201,7 @@ class LoginScreen extends Component {
             firebase.auth().signInWithEmailAndPassword(this.state.userName, this.state.password).then((user) => {
                 console.log(user)
                 if (user) {
-                    this.props.navigation.navigate({ routeName: 'HomeScreen' })
+                    this.props.navigation.navigate({ routeName: 'MainScreen' })
                 } else {
 
                 }

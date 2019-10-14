@@ -3,27 +3,46 @@ import { StyleSheet, Image, View } from 'react-native'
 import { createBottomTabNavigator } from 'react-navigation';
 
 //import screens
+import openTasksScreen from '../screens/OpenTasksScreen';
+import completeTasksScreen from '../screens/CompleteTasksScreen';
 import homeScreen from '../screens/HomeScreen';
-
-import Icon from '../../node_modules/react-native-vector-icons/FontAwesome.js'
+import inProgressTasksScreen from '../screens/InprogressTasksScreen';
+import Icon from 'react-native-vector-icons/MaterialIcons'
 import Styles from '../config/styles';
 
 
 const bottomNav = createBottomTabNavigator(
     {
-        HomeScreen: {
-            screen: homeScreen,
+        Open: {
+            screen: openTasksScreen,
             navigationOptions: {
                 tabBarLabel: () => { return null },
                 tabBarIcon: ({ tintColor }) => {
-                    console.log(tintColor);
-                    return <Icon name={'line-chart'} size={25} color={tintColor} />
+                    return <Icon name={'add-circle'} size={25} color={tintColor} />
+                }
+            }
+        },
+        InProgress: {
+            screen: inProgressTasksScreen,
+            navigationOptions: {
+                tabBarLabel: () => { return null },
+                tabBarIcon: ({ tintColor }) => {
+                    return <Icon name={'add-circle'} size={25} color={tintColor} />
+                }
+            }
+        },
+        Complete: {
+            screen: completeTasksScreen,
+            navigationOptions: {
+                tabBarLabel: () => { return null },
+                tabBarIcon: ({ tintColor }) => {
+                    return <Icon name={'add-circle'} size={25} color={tintColor} />
                 }
             }
         },
     },
     {
-        initialRouteName: "HomeScreen",
+        initialRouteName: "Open",
         tabBarOptions: {
             activeTintColor: Styles.secondaryColor,
             inactiveTintColor: Styles.primaryOnColor,
@@ -53,13 +72,12 @@ bottomNav.navigationOptions = ({ navigation }) => {
             <View style={styles.headerContainer}>
                 <Image
                     style={styles.logo}
-                    source={logo} />
+                />
             </View>
         ),
         headerLeft: null,
         headerRight: null,
         headerStyle: {
-            justifyContent: 'center',
             backgroundColor: Styles.primaryColor,
             borderBottomWidth: 1,
             borderBottomColor: Styles.primaryOnColor
