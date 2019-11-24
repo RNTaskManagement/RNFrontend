@@ -80,7 +80,7 @@ class MainScreen extends Component {
                             style={styles.inputa}
                             placeholder={'Member Name'}
                             placeholderTextColor={'rgba(255, 255, 255, 0.7)'}
-                            onChangeText={(text) => { this.setState({ teamName: text }) }}
+                            onChangeText={(text) => { this.setState({ memberName: text }) }}
                         />
                         <TouchableOpacity onPress={() => { this.createTeam() }}>
                             <Text style={styles.submitText} >Add</Text>
@@ -191,12 +191,57 @@ class MainScreen extends Component {
     //needs to change
 
     createTeam() {
-        db.collection("teams").add({
-            teamName: this.state.teamName,
-            members: this.state.name,
-            teams: []
-        })
-        this.setState({ addMembers: true })
+        console.log('+++++++++++')
+        let state = this.state;
+        db.collection("users").where("name", "==", this.state.memberName).get().
+            then(function (querySnapshot) {
+                if (querySnapshot.empty) {
+                    Alert.alert(
+                        'User doesnot exists',
+                        'Please confirm member is registered with us',
+                        [
+
+                        ],
+                        { cancelable: true },
+                    );
+                } else {
+                    db.collection("users").doc(querySnapshot.docs[0].id).update({ teams: firebase.firestore.FieldValue.arrayUnion(state.teamName) })
+                    db.collection("teams").where("teamName", "==", state.teamName)
+                        .get()
+                        .then(function (querySnapshot) {
+                            if (querySnapshot.empty) {
+                                console.log(state.teamName)
+                                db.collection("teams").add({
+                                    teamName: state.teamName,
+                                    members: [state.memberName],
+                                }).then((result) => {
+                                    console.log(result)
+                                })
+                            } else {
+                                db.collection("teams").doc(querySnapshot.docs[0].id).update({ members: firebase.firestore.FieldValue.arrayUnion(state.memberName) })
+                                // querySnapshot.data.forEach((doc) => {
+                                //     // Build doc ref from doc.id
+                                //     let members = doc.members;
+                                //     console.log(doc)
+                                //     console.log(members)
+                                //     members.push(state.memberName);
+                                //     db.collection("teams").doc(doc.id).update({ members: members });
+                                // });
+                            }
+
+                        })
+
+                }
+            })
+
+        // db.collection("teams").add({
+        //     teamName: this.state.teamName,
+        //     members: [this.state.memberName],
+        // }).then((result) => {
+        //     console.log('********8')
+        //     console.log(result)
+        // })
+        // this.setState({ addMembers: true })
     }
 
     updateTeam() {
@@ -206,6 +251,8 @@ class MainScreen extends Component {
                 querySnapshot.forEach((doc) => {
                     // Build doc ref from doc.id
                     let members = doc.members;
+                    console.log('+++++++++++')
+                    console.log(members)
                     members.push(this.state.userName);
                     db.collection("teams").doc(doc.id).update({ members: members });
                 });
