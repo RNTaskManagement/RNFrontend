@@ -1,102 +1,108 @@
 import React from 'react';
-import { StyleSheet, Image, View } from 'react-native'
-import { createBottomTabNavigator } from 'react-navigation';
+import {StyleSheet, Image, View, Text} from 'react-native';
+import {createBottomTabNavigator} from 'react-navigation';
 
 //import screens
 import openTasksScreen from '../screens/OpenTasksScreen';
 import completeTasksScreen from '../screens/CompleteTasksScreen';
 import homeScreen from '../screens/HomeScreen';
 import inProgressTasksScreen from '../screens/InprogressTasksScreen';
-import Icon from 'react-native-vector-icons/MaterialIcons'
+//import Icon from 'react-native-vector-icons/MaterialIcons'
 import Styles from '../config/styles';
 
-
 const bottomNav = createBottomTabNavigator(
-    {
-        Open: {
-            screen: openTasksScreen,
-            navigationOptions: {
-                tabBarLabel: () => { return null },
-                tabBarIcon: ({ tintColor }) => {
-                    return <Icon name={'add-circle'} size={25} color={tintColor} />
-                }
-            }
+  {
+    Open: {
+      screen: openTasksScreen,
+      navigationOptions: {
+        tabBarLabel: () => {
+          return null;
         },
-        InProgress: {
-            screen: inProgressTasksScreen,
-            navigationOptions: {
-                tabBarLabel: () => { return null },
-                tabBarIcon: ({ tintColor }) => {
-                    return <Icon name={'add-circle'} size={25} color={tintColor} />
-                }
-            }
+        tabBarIcon: ({tintColor}) => {
+          return <Text style={styles.text}> Open </Text>;
+          // return <Icon name={'add-circle'} size={25} color={tintColor} />
         },
-        Complete: {
-            screen: completeTasksScreen,
-            navigationOptions: {
-                tabBarLabel: () => { return null },
-                tabBarIcon: ({ tintColor }) => {
-                    return <Icon name={'add-circle'} size={25} color={tintColor} />
-                }
-            }
-        },
+      },
     },
-    {
-        initialRouteName: "Open",
-        tabBarOptions: {
-            activeTintColor: Styles.secondaryColor,
-            inactiveTintColor: Styles.primaryOnColor,
-            style: {
-                backgroundColor: Styles.primaryColor,
-                borderTopWidth: 1,
-                borderTopColor: Styles.primaryOnColor
-            },
+    InProgress: {
+      screen: inProgressTasksScreen,
+      navigationOptions: {
+        tabBarLabel: () => {
+          return null;
         },
-        navigationOptions: {
-
+        tabBarIcon: ({tintColor}) => {
+          return <Text style={styles.text}> In Progress </Text>;
+          // return <Icon name={'add-circle'} size={25} color={tintColor} />
         },
-        animationEnabled: true,
+      },
     },
-
+    Complete: {
+      screen: completeTasksScreen,
+      navigationOptions: {
+        tabBarLabel: () => {
+          return null;
+        },
+        tabBarIcon: ({tintColor}) => {
+          return <Text style={styles.text}> Complete </Text>;
+          // return <Icon name={'add-circle'} size={25} color={tintColor} />
+        },
+      },
+    },
+  },
+  {
+    initialRouteName: 'Open',
+    tabBarOptions: {
+      activeTintColor: Styles.secondaryColor,
+      inactiveTintColor: Styles.primaryOnColor,
+      style: {
+        backgroundColor: Styles.primaryColor,
+        borderTopWidth: 1,
+        borderTopColor: Styles.primaryOnColor,
+      },
+    },
+    navigationOptions: {},
+    animationEnabled: true,
+  },
 );
 
-bottomNav.navigationOptions = ({ navigation }) => {
-    const { routeName } = navigation.state.routes[navigation.state.index];
-    // You can do whatever you like here to pick the title based on the route name
-    // const headerTitle = routeName;
+bottomNav.navigationOptions = ({navigation}) => {
+  const {routeName} = navigation.state.routes[navigation.state.index];
+  // You can do whatever you like here to pick the title based on the route name
+  // const headerTitle = routeName;
 
-    return {
-        //   title: headerTitle,
-        // header: null,
-        headerTitle: (
-            <View style={styles.headerContainer}>
-                <Image
-                    style={styles.logo}
-                />
-            </View>
-        ),
-        headerLeft: null,
-        headerRight: null,
-        headerStyle: {
-            backgroundColor: Styles.primaryColor,
-            borderBottomWidth: 1,
-            borderBottomColor: Styles.primaryOnColor
-        },
-    };
-}
-
-
+  return {
+    //   title: headerTitle,
+    // header: null,
+    headerTitle: (
+      <View style={styles.headerContainer}>
+        <Image style={styles.logo} />
+      </View>
+    ),
+    headerLeft: null,
+    headerRight: null,
+    headerStyle: {
+      backgroundColor: Styles.primaryColor,
+      borderBottomWidth: 1,
+      borderBottomColor: Styles.primaryOnColor,
+    },
+  };
+};
 
 const styles = StyleSheet.create({
-    headerContainer: {
-        flex: 1,
-        alignItems: 'center'
-    },
-    logo: {
-        // flex: 1,
-        width: 30,
-        height: 30,
-    }
+  headerContainer: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  logo: {
+    // flex: 1,
+    width: 30,
+    height: 30,
+  },
+  text: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: '500',
+  },
 });
 
-export default bottomNav
+export default bottomNav;
