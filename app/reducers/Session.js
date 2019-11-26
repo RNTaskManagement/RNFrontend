@@ -5,7 +5,7 @@ import User from '../models/User'
 
 
 const initialState = {
-
+    teamName: ''
 }
 
 const USER_POST_REQUEST = 'POST_USER_REQUEST';
@@ -15,6 +15,8 @@ const Reducer = (state = initialState, action) => {
         //example
         case USER_POST_REQUEST:
             return { ...state, userPost: { ...state.userPost, isFetching: true, result: '', success: false } };
+        case 'SHARE_TEAMNAME':
+            return { ...state, teamName: action.teamName }
         default:
             return state;
     }

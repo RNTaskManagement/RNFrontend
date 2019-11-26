@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import {
   Platform,
@@ -20,14 +20,15 @@ import {
 
 import renderIf from '../utils/renderif';
 
-const {width: WIDTH} = Dimensions.get('window');
+const { width: WIDTH } = Dimensions.get('window');
 
 const firebase = require('firebase');
 var db;
 
-const {height: HEIGHT} = Dimensions.get('window');
+const { height: HEIGHT } = Dimensions.get('window');
 
 class HomeScreen extends Component {
+
   constructor(props) {
     super(props);
 
@@ -37,18 +38,20 @@ class HomeScreen extends Component {
       //put state item here
       data: [],
       userName: '',
+      teamName: '',
       taskName: '',
       taskDetails: '',
       taskPriority: '',
       createTaskContainer: false,
     };
+
   }
   getTasks() {
     console.log('====================');
     let that = this;
     db.collection('completeTasks')
       .get()
-      .then(function(querysnapshot) {
+      .then(function (querysnapshot) {
         //console.log(querySnapshot.docs[1].data());
         that.state.data = [];
         const docSnapshots = querysnapshot.docs;
@@ -65,7 +68,7 @@ class HomeScreen extends Component {
             let tempData = that.state.data;
             tempData.push(obj);
 
-            that.setState({data: tempData}); //this.state.data.push(obj);
+            that.setState({ data: tempData }); //this.state.data.push(obj);
           }
           console.log(that.state.data);
           // Check for your document data here and break when you find it
@@ -77,7 +80,7 @@ class HomeScreen extends Component {
     let that = this;
     db.collection('completeTasks')
       .get()
-      .then(function(querySnapshot) {
+      .then(function (querySnapshot) {
         db.collection('completeTasks')
           .add({
             taskName: that.state.taskName,
@@ -86,7 +89,7 @@ class HomeScreen extends Component {
           })
           .then(result => {
             that.getTasks();
-            that.setState({createTaskContainer: false});
+            that.setState({ createTaskContainer: false });
           });
       });
   }
@@ -94,8 +97,10 @@ class HomeScreen extends Component {
   componentDidMount() {
     // this.createTasks();
     this.getTasks();
+
+    console.log('*********', this.props.teamName)
     if (firebase.auth().currentUser)
-      this.setState({userName: firebase.auth().currentUser.displayName});
+      this.setState({ userName: firebase.auth().currentUser.displayName });
   }
 
   render() {
@@ -105,12 +110,12 @@ class HomeScreen extends Component {
           <View>
             <TouchableOpacity
               onPress={() => {
-                this.setState({createTaskContainer: true});
+                this.setState({ createTaskContainer: true });
               }}>
               <Text style={styles.createTasksBtn}>Create Task</Text>
             </TouchableOpacity>
           </View>
-          <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
             {renderIf(this.state.createTaskContainer)(
               <ImageBackground style={styles.workContainer}>
                 <Text style={styles.workAreaHeading}>Create new task</Text>
@@ -119,7 +124,7 @@ class HomeScreen extends Component {
                   placeholder={'Task Name'}
                   placeholderTextColor={'rgba(255, 255, 255, 0.7)'}
                   onChangeText={text => {
-                    this.setState({taskName: text});
+                    this.setState({ taskName: text });
                   }}
                 />
                 <TextInput
@@ -127,7 +132,7 @@ class HomeScreen extends Component {
                   placeholder={'Task Details'}
                   placeholderTextColor={'rgba(255, 255, 255, 0.7)'}
                   onChangeText={text => {
-                    this.setState({taskDetails: text});
+                    this.setState({ taskDetails: text });
                   }}
                 />
                 <TextInput
@@ -135,7 +140,7 @@ class HomeScreen extends Component {
                   placeholder={'Task Priority'}
                   placeholderTextColor={'rgba(255, 255, 255, 0.7)'}
                   onChangeText={text => {
-                    this.setState({taskPriority: text});
+                    this.setState({ taskPriority: text });
                   }}
                 />
                 <TouchableOpacity
@@ -150,8 +155,8 @@ class HomeScreen extends Component {
           <View>
             <FlatList
               data={this.state.data}
-              renderItem={({item}) => <Item title={item} />}
-              //keyExtractor={item => item.id}
+              renderItem={({ item }) => <Item title={item} />}
+            //keyExtractor={item => item.id}
             />
           </View>
         </View>
@@ -160,7 +165,7 @@ class HomeScreen extends Component {
   }
 }
 
-function Item({title}) {
+function Item({ title }) {
   console.log(title);
   return (
     <View style={styles.item}>
@@ -198,6 +203,7 @@ function Item({title}) {
 function mapStateToProps(state) {
   return {
     //add mappers here
+    teamName: state.Session.teamName
   };
 }
 
@@ -206,6 +212,7 @@ export default connect(mapStateToProps)(HomeScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'rgba(0,0,0,.9)'
   },
   item: {
     backgroundColor: 'rgba(52, 52, 52, 0.5)',

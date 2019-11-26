@@ -101,7 +101,7 @@ class MainScreen extends Component {
                             placeholderTextColor={'rgba(255, 255, 255, 0.7)'}
                             onChangeText={(text) => { this.setState({ teamName: text }) }}
                         />
-                        <TouchableOpacity onPress={() => this.props.navigation.navigate('TasksScreen')}>
+                        <TouchableOpacity onPress={() => this.checkTeam()} >
                             <Text style={styles.submitText} >Submit</Text>
                         </TouchableOpacity>
 
@@ -244,6 +244,43 @@ class MainScreen extends Component {
         // this.setState({ addMembers: true })
     }
 
+    checkTeam() {
+        let state = this.state
+        let props = this.props
+        db.collection("teams").where("teamName", "==", state.teamName)
+            .get()
+            .then(function (querySnapshot) {
+                if (querySnapshot.empty) {
+                    Alert.alert(
+                        'Team doesnt exist',
+                        'Please check team name',
+                        [
+
+                        ],
+                        { cancelable: true },
+                    );
+                } else {
+
+                    querySnapshot.docs.forEach((doc) => {
+                        // Build doc ref from doc.id
+                        console.log(doc)
+                        let members = doc.data().members;
+                        let found = false;
+                        members.forEach((member) => {
+                            if (member == state.userName) {
+                                found = true;
+                            }
+                        })
+                        if (found) {
+                            // props.navigation.navigate('TasksScreen', { teamName: state.teamName })
+                            props.updateTeamName(state.teamName)
+                            props.navigation.navigate('TasksScreen')
+                        }
+                    });
+                }
+            })
+    }
+
     updateTeam() {
         db.collection("teams").where("teamName", "==", this.state.teamName)
             .get()
@@ -270,10 +307,17 @@ class MainScreen extends Component {
 function mapStateToProps(state) {
     return {
         //add mappers here
+        teamName: state.Session.teamName
     }
 }
 
-export default connect(mapStateToProps)(MainScreen)
+function mapDispatchToProps(dispatch) {
+    return {
+        updateTeamName: (teamName) => dispatch({ type: 'SHARE_TEAMNAME', teamName })
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MainScreen)
 
 const styles = StyleSheet.create({
     backgroundContainer: {

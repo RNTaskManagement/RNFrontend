@@ -1,6 +1,6 @@
 import React from 'react';
-import {StyleSheet, Image, View, Text} from 'react-native';
-import {createBottomTabNavigator} from 'react-navigation';
+import { StyleSheet, Image, View, Text, TouchableOpacity } from 'react-native';
+import { createBottomTabNavigator } from 'react-navigation';
 
 //import screens
 import openTasksScreen from '../screens/OpenTasksScreen';
@@ -18,7 +18,7 @@ const bottomNav = createBottomTabNavigator(
         tabBarLabel: () => {
           return null;
         },
-        tabBarIcon: ({tintColor}) => {
+        tabBarIcon: ({ tintColor }) => {
           return <Text style={styles.text}> Open </Text>;
           // return <Icon name={'add-circle'} size={25} color={tintColor} />
         },
@@ -30,7 +30,7 @@ const bottomNav = createBottomTabNavigator(
         tabBarLabel: () => {
           return null;
         },
-        tabBarIcon: ({tintColor}) => {
+        tabBarIcon: ({ tintColor }) => {
           return <Text style={styles.text}> In Progress </Text>;
           // return <Icon name={'add-circle'} size={25} color={tintColor} />
         },
@@ -42,7 +42,7 @@ const bottomNav = createBottomTabNavigator(
         tabBarLabel: () => {
           return null;
         },
-        tabBarIcon: ({tintColor}) => {
+        tabBarIcon: ({ tintColor }) => {
           return <Text style={styles.text}> Complete </Text>;
           // return <Icon name={'add-circle'} size={25} color={tintColor} />
         },
@@ -65,8 +65,8 @@ const bottomNav = createBottomTabNavigator(
   },
 );
 
-bottomNav.navigationOptions = ({navigation}) => {
-  const {routeName} = navigation.state.routes[navigation.state.index];
+bottomNav.navigationOptions = ({ navigation }) => {
+  const { routeName } = navigation.state.routes[navigation.state.index];
   // You can do whatever you like here to pick the title based on the route name
   // const headerTitle = routeName;
 
@@ -75,7 +75,7 @@ bottomNav.navigationOptions = ({navigation}) => {
     // header: null,
     headerTitle: (
       <View style={styles.headerContainer}>
-        <Image style={styles.logo} />
+        <Text>Hello</Text>
       </View>
     ),
     headerLeft: null,
@@ -91,7 +91,7 @@ bottomNav.navigationOptions = ({navigation}) => {
 const styles = StyleSheet.create({
   headerContainer: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: 'center'
   },
   logo: {
     // flex: 1,

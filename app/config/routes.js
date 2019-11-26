@@ -24,7 +24,6 @@ const mainModalNavigator = createStackNavigator(
     {
         TasksScreen: { screen: bottomNav },
     }, {
-    mode: 'modal',
     cardStyle: {
         backgroundColor: 'transparent',
         opacity: 1
