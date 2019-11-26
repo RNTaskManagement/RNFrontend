@@ -1,47 +1,50 @@
-import { createStackNavigator, createNavigationContainer, createSwitchNavigator } from 'react-navigation';
+import {
+  createStackNavigator,
+  createNavigationContainer,
+  createSwitchNavigator,
+} from 'react-navigation';
 
 import bottomNav from './BottomTabNavigator';
 import loginScreen from '../screens/LoginScreen';
-import homeScreen from '../screens/HomeScreen'
-import mainScreen from '../screens/MainScreen'
+import homeScreen from '../screens/HomeScreen';
+import mainScreen from '../screens/MainScreen';
 
-import { fromRight } from 'react-navigation-transitions';
+import {fromRight} from 'react-navigation-transitions';
 
 const onboardingNavigator = createStackNavigator(
-    {
-        LoginScreen: { screen: loginScreen },
-        HomeScreen: { screen: homeScreen },
-        MainScreen: { screen: mainScreen }
-    },
-    {
-        initialRouteName: 'LoginScreen',
-        headerMode: 'none',
-        transitionConfig: () => fromRight()
-    }
+  {
+    LoginScreen: {screen: loginScreen},
+    HomeScreen: {screen: homeScreen},
+    MainScreen: {screen: mainScreen},
+  },
+  {
+    initialRouteName: 'LoginScreen',
+    headerMode: 'none',
+    transitionConfig: () => fromRight(),
+  },
 );
 
 const mainModalNavigator = createStackNavigator(
-    {
-        TasksScreen: { screen: bottomNav },
-    }, {
+  {
+    TasksScreen: {screen: bottomNav},
+  },
+  {
     cardStyle: {
-        backgroundColor: 'transparent',
-        opacity: 1
+      backgroundColor: 'transparent',
+      opacity: 1,
     },
-}
+  },
 );
 
 const RootNavigator = createSwitchNavigator(
-    {
-        OnboardingNavigator: { screen: onboardingNavigator },
-        MainModalNavigator: { screen: mainModalNavigator },
-    },
-    {
-        initialRouteName: 'OnboardingNavigator',
-        transitionConfig: () => fromRight()
-    }
+  {
+    OnboardingNavigator: {screen: onboardingNavigator},
+    MainModalNavigator: {screen: mainModalNavigator},
+  },
+  {
+    initialRouteName: 'OnboardingNavigator',
+    transitionConfig: () => fromRight(),
+  },
 );
 
-export default createNavigationContainer(RootNavigator)
-
-
+export default createNavigationContainer(RootNavigator);

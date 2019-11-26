@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
 
 import {
   Platform,
@@ -20,15 +20,14 @@ import {
 
 import renderIf from '../utils/renderif';
 
-const { width: WIDTH } = Dimensions.get('window');
+const {width: WIDTH} = Dimensions.get('window');
 
 const firebase = require('firebase');
 var db;
 
-const { height: HEIGHT } = Dimensions.get('window');
+const {height: HEIGHT} = Dimensions.get('window');
 
 class HomeScreen extends Component {
-
   constructor(props) {
     super(props);
 
@@ -44,14 +43,14 @@ class HomeScreen extends Component {
       taskPriority: '',
       createTaskContainer: false,
     };
-
   }
   getTasks() {
-    console.log('====================');
     let that = this;
+    let props = this.props;
     db.collection('completeTasks')
+      .where('teamName', '==', props.teamName)
       .get()
-      .then(function (querysnapshot) {
+      .then(function(querysnapshot) {
         //console.log(querySnapshot.docs[1].data());
         that.state.data = [];
         const docSnapshots = querysnapshot.docs;
@@ -63,12 +62,14 @@ class HomeScreen extends Component {
             obj['taskName'] = doc.taskName;
             obj['taskDetails'] = doc.taskDetails;
             obj['taskPriority'] = doc.taskPriority;
+            obj['createdBy'] = doc.createdBy;
+            obj['createdAt'] = doc.createdAt;
           }
           if (obj.taskName != undefined) {
             let tempData = that.state.data;
             tempData.push(obj);
 
-            that.setState({ data: tempData }); //this.state.data.push(obj);
+            that.setState({data: tempData}); //this.state.data.push(obj);
           }
           console.log(that.state.data);
           // Check for your document data here and break when you find it
@@ -78,18 +79,35 @@ class HomeScreen extends Component {
 
   createTasks() {
     let that = this;
+    let props = this.props;
     db.collection('completeTasks')
       .get()
-      .then(function (querySnapshot) {
+      .then(function(querySnapshot) {
+        var today = new Date();
+        var date =
+          today.getFullYear() +
+          '-' +
+          (today.getMonth() + 1) +
+          '-' +
+          today.getDate();
+        var time =
+          today.getHours() +
+          ':' +
+          today.getMinutes() +
+          ':' +
+          today.getSeconds();
         db.collection('completeTasks')
           .add({
             taskName: that.state.taskName,
             taskDetails: that.state.taskDetails,
             taskPriority: that.state.taskPriority,
+            teamName: props.teamName,
+            createdBy: that.state.userName,
+            createdAt: date + ' ' + time,
           })
           .then(result => {
             that.getTasks();
-            that.setState({ createTaskContainer: false });
+            that.setState({createTaskContainer: false});
           });
       });
   }
@@ -98,9 +116,9 @@ class HomeScreen extends Component {
     // this.createTasks();
     this.getTasks();
 
-    console.log('*********', this.props.teamName)
+    console.log('*********', this.props.teamName);
     if (firebase.auth().currentUser)
-      this.setState({ userName: firebase.auth().currentUser.displayName });
+      this.setState({userName: firebase.auth().currentUser.displayName});
   }
 
   render() {
@@ -110,12 +128,12 @@ class HomeScreen extends Component {
           <View>
             <TouchableOpacity
               onPress={() => {
-                this.setState({ createTaskContainer: true });
+                this.setState({createTaskContainer: true});
               }}>
               <Text style={styles.createTasksBtn}>Create Task</Text>
             </TouchableOpacity>
           </View>
-          <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+          <View style={{flexDirection: 'row', justifyContent: 'center'}}>
             {renderIf(this.state.createTaskContainer)(
               <ImageBackground style={styles.workContainer}>
                 <Text style={styles.workAreaHeading}>Create new task</Text>
@@ -124,7 +142,7 @@ class HomeScreen extends Component {
                   placeholder={'Task Name'}
                   placeholderTextColor={'rgba(255, 255, 255, 0.7)'}
                   onChangeText={text => {
-                    this.setState({ taskName: text });
+                    this.setState({taskName: text});
                   }}
                 />
                 <TextInput
@@ -132,7 +150,7 @@ class HomeScreen extends Component {
                   placeholder={'Task Details'}
                   placeholderTextColor={'rgba(255, 255, 255, 0.7)'}
                   onChangeText={text => {
-                    this.setState({ taskDetails: text });
+                    this.setState({taskDetails: text});
                   }}
                 />
                 <TextInput
@@ -140,7 +158,7 @@ class HomeScreen extends Component {
                   placeholder={'Task Priority'}
                   placeholderTextColor={'rgba(255, 255, 255, 0.7)'}
                   onChangeText={text => {
-                    this.setState({ taskPriority: text });
+                    this.setState({taskPriority: text});
                   }}
                 />
                 <TouchableOpacity
@@ -155,8 +173,8 @@ class HomeScreen extends Component {
           <View>
             <FlatList
               data={this.state.data}
-              renderItem={({ item }) => <Item title={item} />}
-            //keyExtractor={item => item.id}
+              renderItem={({item}) => <Item title={item} />}
+              //keyExtractor={item => item.id}
             />
           </View>
         </View>
@@ -165,8 +183,9 @@ class HomeScreen extends Component {
   }
 }
 
-function Item({ title }) {
-  console.log(title);
+function Item({title}) {
+  let time = title.createdAt.split(' ')[1];
+  let date = title.createdAt.split(' ')[0];
   return (
     <View style={styles.item}>
       <View>
@@ -184,8 +203,9 @@ function Item({ title }) {
         </View>
       </View>
       <View style={styles.footer}>
-        <Text style={styles.footerName}>Create By : Vidul Sir</Text>
-        <Text style={styles.footerTime}>Create At : Today</Text>
+        <Text style={styles.footerName}>UserName : {title.createdBy}</Text>
+        <Text style={styles.footerTime1}>Date : {date}</Text>
+        <Text style={styles.footerTime2}>Time: {time}</Text>
       </View>
     </View>
   );
@@ -203,7 +223,7 @@ function Item({ title }) {
 function mapStateToProps(state) {
   return {
     //add mappers here
-    teamName: state.Session.teamName
+    teamName: state.Session.teamName,
   };
 }
 
@@ -212,7 +232,7 @@ export default connect(mapStateToProps)(HomeScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,.9)'
+    backgroundColor: 'rgba(0,0,0,.9)',
   },
   item: {
     backgroundColor: 'rgba(52, 52, 52, 0.5)',
@@ -234,6 +254,7 @@ const styles = StyleSheet.create({
   taskDescription: {
     fontSize: 16,
     color: 'rgba(7, 243, 125, 0.8)',
+    marginTop: 10,
   },
   taskPriority: {
     fontSize: 16,
@@ -294,7 +315,10 @@ const styles = StyleSheet.create({
   footerName: {
     color: 'white',
   },
-  footerTime: {
+  footerTime1: {
+    color: 'white',
+  },
+  footerTime2: {
     color: 'white',
   },
   submitText: {
