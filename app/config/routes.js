@@ -9,13 +9,13 @@ import loginScreen from '../screens/LoginScreen';
 import homeScreen from '../screens/HomeScreen';
 import mainScreen from '../screens/MainScreen';
 
-import {fromRight} from 'react-navigation-transitions';
+import { fromRight } from 'react-navigation-transitions';
 
 const onboardingNavigator = createStackNavigator(
   {
-    LoginScreen: {screen: loginScreen},
-    HomeScreen: {screen: homeScreen},
-    MainScreen: {screen: mainScreen},
+    LoginScreen: { screen: loginScreen },
+    HomeScreen: { screen: homeScreen },
+    MainScreen: { screen: mainScreen },
   },
   {
     initialRouteName: 'LoginScreen',
@@ -26,7 +26,7 @@ const onboardingNavigator = createStackNavigator(
 
 const mainModalNavigator = createStackNavigator(
   {
-    TasksScreen: {screen: bottomNav},
+    TasksScreen: { screen: bottomNav },
   },
   {
     cardStyle: {
@@ -38,8 +38,8 @@ const mainModalNavigator = createStackNavigator(
 
 const RootNavigator = createSwitchNavigator(
   {
-    OnboardingNavigator: {screen: onboardingNavigator},
-    MainModalNavigator: {screen: mainModalNavigator},
+    OnboardingNavigator: { screen: onboardingNavigator },
+    MainModalNavigator: { screen: mainModalNavigator },
   },
   {
     initialRouteName: 'OnboardingNavigator',

@@ -5,8 +5,12 @@ import User from '../models/User'
 
 
 const initialState = {
-    teamName: ''
+    teamName: '',
+    taskDetails: {}
 }
+
+// const firebase = require('firebase');
+// var db;
 
 const USER_POST_REQUEST = 'POST_USER_REQUEST';
 
@@ -17,6 +21,10 @@ const Reducer = (state = initialState, action) => {
             return { ...state, userPost: { ...state.userPost, isFetching: true, result: '', success: false } };
         case 'SHARE_TEAMNAME':
             return { ...state, teamName: action.teamName }
+        case 'UPDATE_TASK_STATUS':
+            console.log(action.taskDetails)
+
+            return { ...state, taskStatus: action.taskDetails }
         default:
             return state;
     }

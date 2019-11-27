@@ -85,7 +85,7 @@ class MainScreen extends Component {
                         <TouchableOpacity onPress={() => { this.createTeam() }}>
                             <Text style={styles.submitText} >Add</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => this.props.navigation.navigate('TasksScreen')}>
+                        <TouchableOpacity onPress={() => this.checkTeam()}>
                             <Text style={styles.submitText} >Go to team</Text>
                         </TouchableOpacity>
                     </ImageBackground>

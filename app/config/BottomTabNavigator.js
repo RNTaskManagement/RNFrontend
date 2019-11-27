@@ -19,7 +19,12 @@ const bottomNav = createBottomTabNavigator(
           return null;
         },
         tabBarIcon: ({ tintColor }) => {
-          return <Text style={styles.text}> Open </Text>;
+          return <Text style={{
+            color: 'white',
+            fontSize: 20,
+            fontWeight: '500',
+            color: tintColor
+          }}> Open </Text>;
           // return <Icon name={'add-circle'} size={25} color={tintColor} />
         },
       },
@@ -31,7 +36,12 @@ const bottomNav = createBottomTabNavigator(
           return null;
         },
         tabBarIcon: ({ tintColor }) => {
-          return <Text style={styles.text}> In Progress </Text>;
+          return <Text style={{
+            color: 'white',
+            fontSize: 20,
+            fontWeight: '500',
+            color: tintColor
+          }}> In Progress </Text>;
           // return <Icon name={'add-circle'} size={25} color={tintColor} />
         },
       },
@@ -43,7 +53,12 @@ const bottomNav = createBottomTabNavigator(
           return null;
         },
         tabBarIcon: ({ tintColor }) => {
-          return <Text style={styles.text}> Complete </Text>;
+          return <Text style={{
+            color: 'white',
+            fontSize: 20,
+            fontWeight: '500',
+            color: tintColor
+          }}> Complete </Text>;
           // return <Icon name={'add-circle'} size={25} color={tintColor} />
         },
       },
