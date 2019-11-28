@@ -7,6 +7,7 @@ import openTasksScreen from '../screens/OpenTasksScreen';
 import completeTasksScreen from '../screens/CompleteTasksScreen';
 import homeScreen from '../screens/HomeScreen';
 import inProgressTasksScreen from '../screens/InprogressTasksScreen';
+import settingScreen from '../screens/SettingsScreen'
 //import Icon from 'react-native-vector-icons/MaterialIcons'
 import Styles from '../config/styles';
 
@@ -21,7 +22,7 @@ const bottomNav = createBottomTabNavigator(
         tabBarIcon: ({ tintColor }) => {
           return <Text style={{
             color: 'white',
-            fontSize: 20,
+            fontSize: 16,
             fontWeight: '500',
             color: tintColor
           }}> Open </Text>;
@@ -38,10 +39,10 @@ const bottomNav = createBottomTabNavigator(
         tabBarIcon: ({ tintColor }) => {
           return <Text style={{
             color: 'white',
-            fontSize: 20,
+            fontSize: 16,
             fontWeight: '500',
             color: tintColor
-          }}> In Progress </Text>;
+          }}> Progress </Text>;
           // return <Icon name={'add-circle'} size={25} color={tintColor} />
         },
       },
@@ -55,7 +56,7 @@ const bottomNav = createBottomTabNavigator(
         tabBarIcon: ({ tintColor }) => {
           return <Text style={{
             color: 'white',
-            fontSize: 20,
+            fontSize: 16,
             fontWeight: '500',
             color: tintColor
           }}> Complete </Text>;
@@ -63,9 +64,26 @@ const bottomNav = createBottomTabNavigator(
         },
       },
     },
+    Settings: {
+      screen: settingScreen,
+      navigationOptions: {
+        tabBarLabel: () => {
+          return null;
+        },
+        tabBarIcon: ({ tintColor }) => {
+          return <Text style={{
+            color: 'white',
+            fontSize: 16,
+            fontWeight: '500',
+            color: tintColor
+          }}> Setting </Text>;
+          // return <Icon name={'add-circle'} size={25} color={tintColor} />
+        },
+      },
+    },
   },
   {
-    initialRouteName: 'Open',
+    initialRouteName: 'Settings',
     tabBarOptions: {
       activeTintColor: Styles.secondaryColor,
       inactiveTintColor: Styles.primaryOnColor,
@@ -115,7 +133,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: 'white',
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: '500',
   },
 });

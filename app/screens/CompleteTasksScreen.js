@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import {
   Platform,
@@ -21,14 +21,14 @@ import {
 import renderIf from '../utils/renderif';
 import InProgressTasks from './InprogressTasksScreen';
 
-const {width: WIDTH} = Dimensions.get('window');
+const { width: WIDTH } = Dimensions.get('window');
 
 const firebase = require('firebase');
 var db;
 
-const {height: HEIGHT} = Dimensions.get('window');
+const { height: HEIGHT } = Dimensions.get('window');
 
-import {NavigationEvents} from 'react-navigation';
+import { NavigationEvents } from 'react-navigation';
 
 class HomeScreen extends Component {
   constructor(props) {
@@ -55,9 +55,9 @@ class HomeScreen extends Component {
     db.collection('completeTasks')
       .where('teamName', '==', props.teamName)
       .get()
-      .then(function(querysnapshot) {
+      .then(function (querysnapshot) {
         //console.log(querySnapshot.docs[1].data());
-        that.state.data = [];
+        that.setState({ data: [] })
         const docSnapshots = querysnapshot.docs;
         for (var i in docSnapshots) {
           var obj = {};
@@ -77,7 +77,7 @@ class HomeScreen extends Component {
             let tempData = that.state.data;
             tempData.push(obj);
 
-            that.setState({data: tempData}); //this.state.data.push(obj);
+            that.setState({ data: tempData }); //this.state.data.push(obj);
           }
           console.log(that.state.data);
           // Check for your document data here and break when you find it
@@ -90,7 +90,7 @@ class HomeScreen extends Component {
     let props = this.props;
     db.collection('completeTasks')
       .get()
-      .then(function(querySnapshot) {
+      .then(function (querySnapshot) {
         var today = new Date();
         var date =
           today.getFullYear() +
@@ -115,7 +115,7 @@ class HomeScreen extends Component {
           })
           .then(result => {
             that.getTasks();
-            that.setState({createTaskContainer: false});
+            that.setState({ createTaskContainer: false });
           });
       });
   }
@@ -126,7 +126,7 @@ class HomeScreen extends Component {
 
     console.log('*********', this.props.teamName);
     if (firebase.auth().currentUser)
-      this.setState({userName: firebase.auth().currentUser.displayName});
+      this.setState({ userName: firebase.auth().currentUser.displayName });
   }
 
   render() {
@@ -142,12 +142,12 @@ class HomeScreen extends Component {
             />
             <TouchableOpacity
               onPress={() => {
-                this.setState({createTaskContainer: true});
+                this.setState({ createTaskContainer: true });
               }}>
               <Text style={styles.createTasksBtn}>Create Task</Text>
             </TouchableOpacity>
           </View>
-          <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
             {renderIf(this.state.createTaskContainer)(
               <ImageBackground style={styles.workContainer}>
                 <Text style={styles.workAreaHeading}>Create new task</Text>
@@ -156,7 +156,7 @@ class HomeScreen extends Component {
                   placeholder={'Task Name'}
                   placeholderTextColor={'rgba(255, 255, 255, 0.7)'}
                   onChangeText={text => {
-                    this.setState({taskName: text});
+                    this.setState({ taskName: text });
                   }}
                 />
                 <TextInput
@@ -164,7 +164,7 @@ class HomeScreen extends Component {
                   placeholder={'Task Details'}
                   placeholderTextColor={'rgba(255, 255, 255, 0.7)'}
                   onChangeText={text => {
-                    this.setState({taskDetails: text});
+                    this.setState({ taskDetails: text });
                   }}
                 />
                 <TextInput
@@ -172,7 +172,7 @@ class HomeScreen extends Component {
                   placeholder={'Task Priority'}
                   placeholderTextColor={'rgba(255, 255, 255, 0.7)'}
                   onChangeText={text => {
-                    this.setState({taskPriority: text});
+                    this.setState({ taskPriority: text });
                   }}
                 />
                 <TouchableOpacity
@@ -187,10 +187,10 @@ class HomeScreen extends Component {
           <View>
             <FlatList
               data={this.state.data}
-              renderItem={({item}) => (
+              renderItem={({ item }) => (
                 <Item title={item} props={this.props} state={this} />
               )}
-              //keyExtractor={item => item.id}
+            //keyExtractor={item => item.id}
             />
           </View>
         </View>
@@ -199,7 +199,7 @@ class HomeScreen extends Component {
   }
 }
 
-function Item({title, props, state}) {
+function Item({ title, props, state }) {
   let time = title.createdAt.split(' ')[1];
   let date = title.createdAt.split(' ')[0];
 
@@ -224,7 +224,7 @@ function Item({title, props, state}) {
         <Text style={styles.footerTime1}>Date : {date}</Text>
         <Text style={styles.footerTime2}>Time: {time}</Text>
       </View>
-      <View style={{alignItems: 'center', alignContent: 'center'}}>
+      <View style={{ alignItems: 'center', alignContent: 'center' }}>
         <TouchableOpacity
           onPress={() => {
             let taskDetails = {
@@ -235,16 +235,17 @@ function Item({title, props, state}) {
             db.collection('completeTasks')
               .doc(title.taskId)
               .delete()
-              .then(function() {
+              .then(function () {
                 db.collection('inProgessTasks')
                   .add(title)
                   .then(() => {
-                    //InProgressTasks.getTasks();
+
+                    state.setState({ updateTaskStatus: false });
+                    state.getTasks();
                   });
-                state.setState({updateTaskStatus: false});
-                state.getTasks();
+
               })
-              .catch(function(error) {
+              .catch(function (error) {
                 console.error('Error removing document: ', error);
               });
 
@@ -253,7 +254,7 @@ function Item({title, props, state}) {
           <Text style={styles.moveBtn}>In-Progress</Text>
         </TouchableOpacity>
       </View>
-      <View style={{alignItems: 'center', alignContent: 'center'}}>
+      <View style={{ alignItems: 'center', alignContent: 'center' }}>
         <TouchableOpacity
           onPress={() => {
             let taskDetails = {
@@ -264,16 +265,16 @@ function Item({title, props, state}) {
             db.collection('completeTasks')
               .doc(title.taskId)
               .delete()
-              .then(function() {
+              .then(function () {
                 db.collection('openTasks')
                   .add(title)
                   .then(() => {
-                    //InProgressTasks.getTasks();
+                    state.setState({ updateTaskStatus: false });
+                    state.getTasks();
                   });
-                state.setState({updateTaskStatus: false});
-                state.getTasks();
+
               })
-              .catch(function(error) {
+              .catch(function (error) {
                 console.error('Error removing document: ', error);
               });
 
@@ -305,7 +306,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     updateTaskStatus: taskDetails =>
-      dispatch({type: 'UPDATE_TASK_STATUS', taskDetails}),
+      dispatch({ type: 'UPDATE_TASK_STATUS', taskDetails }),
   };
 }
 
