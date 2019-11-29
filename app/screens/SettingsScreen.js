@@ -13,8 +13,11 @@ import {
     Text,
     StatusBar,
     SafeAreaView,
-    Alert
+    Alert,
+    ScrollView
 } from 'react-native';
+
+import { NavigationEvents } from 'react-navigation';
 
 const firebase = require('firebase')
 
@@ -32,47 +35,75 @@ class SettingsScreen extends Component {
 
         this.state = {
             //put state item here
-            userName: 'NewUser'
+            userName: 'NewUser',
+            members: ' '
         };
+
     }
 
     componentDidMount() {
         if (firebase.auth().currentUser) {
             this.setState({ userName: firebase.auth().currentUser.displayName })
         }
+        let that = this;
+        db.collection("teams").where("teamName", "==", this.props.teamName)
+            .get()
+            .then(function (querySnapshot) {
+                querySnapshot.docs.forEach((doc) => {
+                    let membersString = '';
+                    let members = doc.data().members;
+                    members.forEach((member) => {
+                        membersString += member + ', \t';
+                    })
+                    that.setState({ members: membersString })
+                });
+            })
     }
 
     render() {
         return (
             <ImageBackground style={styles.backgroundContainer}>
-                <View style={styles.logoContainer}>
-                    <Image source={{ uri: 'http://www.icons101.com/icon_ico/id_78917/user.ico' }} style={{ width: 100, height: 100 }} />
-                    <Text style={styles.logoText}> Signed in as <Text style={{ color: 'green' }}>: {this.state.userName}</Text> </Text>
-                </View>
-                <View style={{ alignItems: 'center', alignContent: 'center' }}>
-                    <Text style={styles.teamName}>Joined Team: <Text style={{ color: '#fff' }}>{this.props.teamName}</Text></Text>
-                </View>
-                <View style={{ alignItems: 'center', alignContent: 'center' }}>
-                    <TouchableOpacity
-                        onPress={() => {
-                            let that = this
-                            firebase.auth().signOut().then(function () {
-                                that.props.navigation.navigate('LoginScreen')
-                            }).catch(function (error) {
-                                // An error happened.
-                            });
-                        }}>
-                        <Text style={styles.moveBtn}>Sign-out</Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={{ alignItems: 'center', alignContent: 'center' }}>
-                    <TouchableOpacity
-                        onPress={() => {
-                            this.props.navigation.navigate('MainScreen')
-                        }}>
-                        <Text style={styles.moveBtn}>Go to main screen</Text>
-                    </TouchableOpacity>
-                </View>
+                <ScrollView style={{ width: WIDTH }}>
+                    <NavigationEvents
+                        onWillFocus={() => {
+
+                        }}
+                    />
+                    <View>
+                        <View style={styles.logoContainer}>
+                            <Image source={{ uri: 'http://www.icons101.com/icon_ico/id_78917/user.ico' }} style={{ width: 100, height: 100 }} />
+                            <Text style={styles.logoText}> Signed in as <Text style={{ color: 'green' }}>: {this.state.userName}</Text> </Text>
+                        </View>
+                        <View style={{ alignItems: 'center', alignContent: 'center' }}>
+                            <Text style={styles.teamName}>Joined Team: <Text style={{ color: '#fff' }}>{this.props.teamName}</Text></Text>
+                        </View>
+                        <View style={{ alignItems: 'center', alignContent: 'center' }}>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    let that = this
+                                    firebase.auth().signOut().then(function () {
+                                        that.props.navigation.navigate('LoginScreen')
+                                    }).catch(function (error) {
+                                        // An error happened.
+                                    });
+                                }}>
+                                <Text style={styles.moveBtn}>Sign-out</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={{ alignItems: 'center', alignContent: 'center' }}>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    this.props.navigation.navigate('MainScreen')
+                                }}>
+                                <Text style={styles.moveBtn}>Go to main screen</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <ImageBackground style={styles.workContainer}>
+                            <Text style={styles.workAreaHeading}>Members : </Text>
+                            <Text style={{ color: 'rgba(7, 243, 125, 0.8)' }}>{this.state.members}</Text>
+                        </ImageBackground>
+                    </View>
+                </ScrollView>
             </ImageBackground>
         );
     }
@@ -103,6 +134,7 @@ const styles = StyleSheet.create({
     logoContainer: {
         alignItems: 'center',
         marginBottom: 50,
+        marginTop: 50,
     },
     logoText: {
         color: 'white',
@@ -166,5 +198,23 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
     },
+    workContainer: {
+        margin: 10,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#fff',
+        paddingTop: 20,
+        paddingBottom: 20,
+        borderRadius: 25,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(52, 52, 52, 0.5)',
+    },
+    workAreaHeading: {
+        marginBottom: 20,
+        color: 'rgba(255, 255, 255, 0.7)',
+        fontSize: 22,
+        textAlign: 'center',
+    }
 });
 

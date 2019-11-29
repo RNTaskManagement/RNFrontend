@@ -215,7 +215,14 @@ class MainScreen extends Component {
                                     teamName: state.teamName,
                                     members: [state.memberName],
                                 }).then((result) => {
-                                    console.log(result)
+                                    Alert.alert(
+                                        'Member added',
+                                        'Member added to the team',
+                                        [
+
+                                        ],
+                                        { cancelable: true },
+                                    );
                                 })
                             } else {
                                 db.collection("teams").doc(querySnapshot.docs[0].id).update({ members: firebase.firestore.FieldValue.arrayUnion(state.memberName) })
@@ -334,17 +341,6 @@ const styles = StyleSheet.create({
     buttonContainer: {
         flexDirection: 'row'
     },
-    workContainer: {
-        paddingBottom: 20,
-        paddingTop: 20,
-        height: 290,
-        width: WIDTH - 65,
-        borderRadius: 25,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 25,
-        backgroundColor: 'rgba(52, 52, 52, 0.5)',
-    },
     logo: {},
     logoText: {
         color: 'white',
@@ -411,6 +407,17 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         textAlign: 'center',
+    },
+    workContainer: {
+        paddingBottom: 20,
+        paddingTop: 20,
+        height: 290,
+        width: WIDTH - 65,
+        borderRadius: 25,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 25,
+        backgroundColor: 'rgba(52, 52, 52, 0.5)',
     },
     workAreaHeading: {
         marginBottom: 20,
